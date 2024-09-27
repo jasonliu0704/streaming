@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Streaming Client with Audio</title>
+</head>
+<body>
+    <h1>Video Streaming Client with Audio</h1>
+    <video id="video" controls autoplay></video>
+
+    <script>
+        (async function() {
+            const video = document.getElementById('video');
+            if (!window.MediaSource) {
+                alert('MediaSource API is not supported in your browser');
+                return;
+            }
+
+            const mediaSource = new MediaSource();
+            video.src = URL.createObjectURL(mediaSource);
+
+            mediaSource.addEventListener('sourceopen', onSourceOpen);
+
+            async function onSourceOpen() {
+                const mimeCodec = 'video/mp4; codecs="avc1.4D401F, mp4a.40.2"';
+                const sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
+
+                const ws = new WebSocket('ws://localhost:8765/');
+                ws.binaryType = 'arraybuffer';
+
+                ws.onmessage = (event) => {
+                    const chunk = new Uint8Array(event.data);
+                    sourceBuffer.appendBuffer(chunk);
+                };
+
+                ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                };
+
+                ws.onclose = () => {
+                    console.log('WebSocket connection closed');
+                };
+            }
+        })();
+    </script>
+</body>
+</html>
