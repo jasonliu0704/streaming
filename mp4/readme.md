@@ -1,3 +1,12 @@
+install
+pip install asyncio
+pip install websockets
+
+run:
+python mp4_server.py
+python -m http.server 8000
+go to localhost:8000
+
 Option 1: Use Media Source Extensions (MSE) with Fragmented MP4 (fMP4) Segments
 Overview
 Media Source Extensions (MSE) allow JavaScript to feed media data (audio and video) directly to a HTML5 <video> element.
