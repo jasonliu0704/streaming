@@ -1,0 +1,23 @@
+.mask-wapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  .mask {
+    background: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+  }
+  .content-wapper {
+    transform: translateY(-110%);
+    position: relative;
+    top: 0;
+    padding: 0 1rem;
+    transition: transform 0.3s ease;
+    display: block;
+  }
+  .content-wapper-hide {
+    transform: translateY(0);
+  }
+}

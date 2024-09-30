@@ -1,0 +1,85 @@
+# Default server configuration
+#
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    server_name _;
+
+    # Redirect to the HTTPS version
+    return 301 https://$host$request_uri;
+}
+
+# Redirect HTTP to HTTPS for vm.schemedraw.com
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name vm.schemedraw.com;
+
+    # Redirect to HTTPS
+    return 301 https://vm.schemedraw.com$request_uri;
+}
+
+# HTTPS server block for vm.schemedraw.com
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    server_name vm.schemedraw.com;
+
+    ssl_certificate /etc/letsencrypt/live/vm.schemedraw.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/vm.schemedraw.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    location / {
+        proxy_pass http://localhost:8000; # Assuming your app runs on port 8000
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# Redirect HTTP to HTTPS for photoceleb.xyz
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name photoceleb.xyz www.photoceleb.xyz;
+
+    # Redirect to HTTPS
+    return 301 https://photoceleb.xyz$request_uri;
+}
+
+# HTTPS server block for photoceleb.xyz
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    server_name photoceleb.xyz www.photoceleb.xyz;
+
+    ssl_certificate /etc/letsencrypt/live/photoceleb.xyz/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/photoceleb.xyz/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+    location / {
+				root /home/proudnotice/faceswap-mobile/dist;
+    		index index.html;
+
+        # Serve files from the root directory
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /privacy {
+        # Serve files from the privacy policy directory
+        alias /home/proudnotice/faceswap-mobile/src/assets/privacy-policy/;
+        try_files $uri $uri/ /index.html;
+    }
+}
