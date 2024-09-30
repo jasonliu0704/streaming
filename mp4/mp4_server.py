@@ -7,6 +7,7 @@ async def video_stream(websocket, path):
     video_file = 'video.mp4'  # Replace with your video file
     command = [
         'ffmpeg',
+        '-stream_loop', '2',  # Loop the video 2 additional times (total 3 plays)
         '-re',
         '-i', video_file,
         '-c:v', 'copy',
@@ -15,7 +16,6 @@ async def video_stream(websocket, path):
         '-movflags', 'frag_keyframe+empty_moov+default_base_moof',
         'pipe:1'
     ]
-
     process = await asyncio.create_subprocess_exec(
         *command,
         stdout=asyncio.subprocess.PIPE,
